@@ -45,12 +45,6 @@ async function deleteName(name) {
 <template>
   <div>
     <UContainer>
-
-      <h1 class="text-2xl font-semibold py-4">
-        <NuxtLink to="/">
-          Baby Names
-        </NuxtLink>
-      </h1>
       <Random />
     </UContainer>
     <UContainer class="my-4">
