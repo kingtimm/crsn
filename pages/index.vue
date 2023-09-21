@@ -7,6 +7,7 @@ const toast = useToast()
 const { data: names } = await useFetch('/api/names')
 
 async function addName() {
+  console.log('fired')
   if (!newName.value.trim()) { return }
 
   loading.value = true
@@ -42,7 +43,7 @@ async function deleteName(name) {
 </script>
 
 <template>
-  <div @submit.prevent="addName">
+  <div>
     <UContainer>
 
       <h1 class="text-2xl font-semibold py-4">
@@ -54,13 +55,13 @@ async function deleteName(name) {
     </UContainer>
     <UContainer class="my-4">
       <h2 class="text-xl">Names List</h2>
-      <div class="flex items-center gap-2 py-4">
+      <form class="flex items-center gap-2 py-4" @submit.prevent="addName">
         <UInput ref="newNameInput" v-model="newName" name="name" :disabled="loading" class="flex-1" placeholder="New Name"
           autocomplete="off" autofocus :ui="{ wrapper: 'flex-1' }" />
 
         <UButton type="submit" icon="i-heroicons-plus-20-solid" :loading="loading"
           :disabled="newName.trim().length === 0" />
-      </div>
+      </form>
       <div class="flex flex-wrap gap-2">
         <UBadge variant="subtle" v-for="name of names" :key="name.id"
           class="flex items-center gap-2 pl-4 w-min rounded-full">
