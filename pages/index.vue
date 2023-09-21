@@ -55,7 +55,7 @@ async function deleteName(name) {
     </UContainer>
     <UContainer class="my-4">
       <h2 class="text-xl">Names List</h2>
-      <form class="flex items-center gap-2 py-4" @submit.prevent="addName">
+      <form class="flex items-center gap-2 py-4 text-lg" @submit.prevent="addName">
         <UInput ref="newNameInput" v-model="newName" name="name" :disabled="loading" class="flex-1" placeholder="New Name"
           autocomplete="off" autofocus :ui="{ wrapper: 'flex-1' }" />
 

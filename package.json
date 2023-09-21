@@ -23,6 +23,7 @@
     "@iconify-json/simple-icons": "^1.1.71",
     "@libsql/client": "^0.3.4",
     "@nuxt/ui": "^2.8.1",
+    "@nuxtjs/color-mode": "^3.3.0",
     "drizzle-orm": "^0.28.6",
     "h3-zod": "^0.5.1",
     "uncrypto": "^0.1.3"
