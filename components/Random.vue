@@ -3,9 +3,11 @@ const { data, refresh, pending } = await useFetch("/api/names/random")
 </script>
 
 <template>
-  <p class="flex align-items-center gap-1">
+  <UCard>
+      <p class="flex items-center gap-1 pb-3">
+        <span class="font-thin text-2xl leading-none" v-for="name in data">{{ name.name }}</span>
+      </p>
     <UButton class="mr-4" type="button" icon="i-heroicons-arrow-path" @click="refresh"
-          :disabled="pending" />
-    <span class="font-thin text-2xl" v-for="name in data">{{ name.name }}</span>
-  </p>
+          :disabled="pending">Generate</UButton>
+  </UCard>
 </template>

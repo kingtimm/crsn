@@ -42,30 +42,34 @@ async function deleteName(name) {
 </script>
 
 <template>
-  <UCard @submit.prevent="addName">
-    <template #header>
-      <h1 class="text-2xl font-semibold">
+  <div @submit.prevent="addName">
+    <UContainer>
+
+      <h1 class="text-2xl font-semibold py-4">
         <NuxtLink to="/">
           Baby Names
         </NuxtLink>
       </h1>
       <Random />
-      <UContainer class="my-4">
-        <h2 class="text-xl">Names List</h2>
-        <div class="flex items-center gap-2 py-4">
-          <UInput ref="newNameInput" v-model="newName" name="name" :disabled="loading" class="flex-1"
-            placeholder="New Name" autocomplete="off" autofocus :ui="{ wrapper: 'flex-1' }" />
+    </UContainer>
+    <UContainer class="my-4">
+      <h2 class="text-xl">Names List</h2>
+      <div class="flex items-center gap-2 py-4">
+        <UInput ref="newNameInput" v-model="newName" name="name" :disabled="loading" class="flex-1" placeholder="New Name"
+          autocomplete="off" autofocus :ui="{ wrapper: 'flex-1' }" />
 
-          <UButton type="submit" icon="i-heroicons-plus-20-solid" :loading="loading"
-            :disabled="newName.trim().length === 0" />
-        </div>
-        <div class="inline-flex align-items-baseline gap-2">
-          <UBadge variant="subtle" v-for="name of names" :key="name.id" class="gap-2 pl-4 w-min rounded-full">
+        <UButton type="submit" icon="i-heroicons-plus-20-solid" :loading="loading"
+          :disabled="newName.trim().length === 0" />
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <UBadge variant="subtle" v-for="name of names" :key="name.id"
+          class="flex items-center gap-2 pl-4 w-min rounded-full">
+          <span class="leading-none">
             {{ name.name }}
-            <UButton variant="white" size="2xs" icon="i-heroicons-x-mark-20-solid" @click="deleteName(name)" />
-          </UBadge>
-        </div>
-      </UContainer>
-    </template>
-  </UCard>
+          </span>
+          <UButton variant="ghost" size="2xs" icon="i-heroicons-x-mark-20-solid" @click="deleteName(name)" />
+        </UBadge>
+      </div>
+    </UContainer>
+  </div>
 </template>
