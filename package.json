@@ -1,0 +1,30 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "module": "esnext",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "migrations": "drizzle-kit generate:sqlite",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.43.0",
+    "@nuxt/devtools": "latest",
+    "drizzle-kit": "^0.19.13",
+    "nuxt": "^3.7.3"
+  },
+  "dependencies": {
+    "@iconify-json/simple-icons": "^1.1.71",
+    "@libsql/client": "^0.3.4",
+    "@nuxt/ui": "^2.8.1",
+    "drizzle-orm": "^0.28.6",
+    "h3-zod": "^0.5.1",
+    "uncrypto": "^0.1.3"
+  }
+}
