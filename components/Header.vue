@@ -2,16 +2,15 @@
 import { useCycleList } from '@vueuse/core'
 
 const colorMode = useColorMode()
-const toggle = ref(false)
-const { state, next, prev } = useCycleList([
-  'light',
-  'dark',
-])
-
-watchEffect(() => {
-  if (toggle.value) { state.value = 'light' } else { state.value = 'dark' }
-  colorMode.preference = state.value
+const isDark = computed({
+  get() {
+    return colorMode.value === 'dark'
+  },
+  set() {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+  }
 })
+
 </script>
 
 <template>
@@ -22,7 +21,13 @@ watchEffect(() => {
       </NuxtLink>
     </h1>
     <div class="m-3">
-      <UToggle v-model="toggle" on-icon="i-heroicons-sun" off-icon="i-heroicons-moon" />
+      <ClientOnly>
+        <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost"
+          aria-label="Theme" @click="isDark = !isDark" />
+        <template #fallback>
+          <div class="w-8 h-8" />
+        </template>
+      </ClientOnly>
     </div>
   </UContainer>
 </template>
