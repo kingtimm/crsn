@@ -7,15 +7,26 @@ export default eventHandler(async (event) => {
   })
 
   // List todos for the current user
-  const deletedTodo = await useDb().delete(tables.names).where(and(
-    eq(tables.names.id, id),
-  )).returning().get()
-  
-  if (!deletedTodo) {
-    throw createError({
-      statusCode: 404,
-      message: 'Todo not found'
-    })
+  try {
+    const deletedTodo = await useDb()?.delete(tables.names).where(and(
+      eq(tables.names.id, id),
+    )).returning().get()
+    if (!deletedTodo) {
+      throw createError({
+        statusCode: 404,
+        message: 'Todo not found'
+      })
+    }
+    return deletedTodo
+  } catch (error) {
+    // @ts-ignore
+    if (error?.message.includes('SQLITE_CONSTRAINT')) {
+      throw createError({
+        statusCode: 500,
+        message: "This name is in favorites. Please delete favorites with this name first."
+      })
+    } else {
+      throw error
+    }
   }
-  return deletedTodo
 })

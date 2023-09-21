@@ -6,10 +6,10 @@ export default eventHandler(async (event) => {
   })
 
   // List names for the current user
-  const todo = await useDb().insert(tables.names).values({
+  const nameResult = await useDb().insert(tables.names).values({
     name,
     createdAt: new Date()
   }).returning().get()
 
-  return todo
+  return nameResult
 })
