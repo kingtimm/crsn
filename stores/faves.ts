@@ -15,10 +15,29 @@ export const useFaves = defineStore('faves', () => {
   const { data: faves, refresh } = useFetch('/api/faves')
   const toast = useToast()
 
-  const sortState = ref() as Ref<SortArray> 
+  const sortState = ref() as Ref<SortArray>
+
+  const _sortableInstance = {
+    // by default this will just give the value, but the faves component takes this over
+    fn: () => sortState.value
+  }
+
+  function setSortableInstance(fn: (()=>SortArray)) {
+    _sortableInstance.fn = fn
+    return _sortableInstance.fn
+  }
+
+  async function getSortableArray() {
+    await nextTick()
+    const srt = _sortableInstance.fn()
+    return srt
+  }
 
   async function storeSortOrder(arr: SortArray) {
+    // putting in next tick
+    await nextTick()
     sortState.value = arr
+    updateFavesOrder(sortState.value)
     await persistStateToDb(sortState.value)
   }
 
@@ -35,8 +54,9 @@ export const useFaves = defineStore('faves', () => {
     const { data, ...all } = await useLazyFetch<SortArray>('/api/faves/sort')
     if (data.value) {
       sortState.value = data.value
+      updateFavesOrder(sortState.value)
     }
-    return {data, ...all}
+    return { data, ...all }
   }
 
   async function addFave(randomNames: Name[] | null) {
@@ -55,7 +75,9 @@ export const useFaves = defineStore('faves', () => {
           }
         })
 
-        refresh()
+        // get the correct ids from sortable
+        await refresh()
+        await storeSortOrder(await getSortableArray())
 
         toast.add({ title: `Favorited` })
       } catch (err: any) {
@@ -75,7 +97,9 @@ export const useFaves = defineStore('faves', () => {
       if (faves.value) {
         faves.value = faves.value.filter(t => t.id !== id)
       }
-      refresh()
+      // get the correct ids from sortable
+      await refresh()
+      await storeSortOrder(await getSortableArray())
       toast.add({ title: `Fave deleted.` })
     } catch (err: any) {
       if (err.data?.data?.issues) {
@@ -84,6 +108,19 @@ export const useFaves = defineStore('faves', () => {
       }
     }
   }
+
+  // this updates the data store with the array value either from sortable or the db
+  function updateFavesOrder(arr: SortArray) {
+    const order = arr.map((x: string) => Number(x))
+    if (faves.value) {
+      faves.value = [...faves.value].sort((a, b) => {
+        const first = order.indexOf(a.id)
+        const second = order.indexOf(b.id)
+        return (first - second)
+      })
+    }
+  }
+
   return {
     sortState,
     deleteFave,
@@ -93,6 +130,7 @@ export const useFaves = defineStore('faves', () => {
     loading,
     getStateFromDb,
     storeSortOrder,
+    setSortableInstance
   }
 }
 )

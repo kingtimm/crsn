@@ -9,96 +9,43 @@ import { storeToRefs } from 'pinia'
 const faveStore = useFaves()
 const { refresh, pending } = await faveStore.getStateFromDb()
 const { faves, sortState } = storeToRefs(faveStore)
-const loadingOrder = ref(true)
 
 const el = ref<HTMLElement | null>(null)
 const st = ref([]) as Ref<Array<string>>
 
-// const sortedFavorites = computed(() => {
-//   while(pending) {
-//     break
-//   }
-//   if(sortState.value) {
-//     const output = sortState.value.map(i => {
-//       if(faves.value) {
-//         return faves.value[Number(i)]
-//       }
-//     })
-//     return output
-//   } else {
-//     return faves
-//   }
-// })
-
 // @ts-ignore this area isn't quite ts ready
 const sortableOptions = {
   name: 'faves',
-  // handle: '.handle',
+  handle: '.handle',
   store: {
-    get: () => {
-      loadingOrder.value = false
-      return sortState.value
-    },
-    set: async (sortable: any) => await faveStore.storeSortOrder(sortable.toArray())
+    set: async (sortable: any) => {
+      nextTick(async () => {
+        await faveStore.storeSortOrder(sortable.toArray())
+      })
+    }
   },
-  // onUpdate: (e: any) => {
-  //   moveArrayElement(faves, e.oldIndex, e.newIndex)
-  //   nextTick(() => {
-  //     if (el.value?.children) {
-  //       st.value.length = 0
-  //       for (const child of el.value?.children) {
-  //         for (const attribute of child.attributes) {
-  //           if (attribute.name == "data-id") {
-  //             st.value.push(attribute.value)
-  //           }
-  //         }
-  //       }
-  //     }
-  //     console.log('new value', st.value)
-  //     faveStore.storeSortOrder(st.value)
-  //   })
 }
-// const persist = useDebounceFn(() => {
-//   if (el.value?.children) {
-//     st.value.length = 0
-//     for (const child of el.value?.children) {
-//       for (const attribute of child.attributes) {
-//         if (attribute.name == "data-id") {
-//           st.value.push(attribute.value)
-//         }
-//       }
-//     }
-//   }
-//   console.log('new value', st.value)
-//   faveStore.storeSortOrder(st.value)
-// }, 1000)
-
-// useMutationObserver(el, (mutations) => {
-//   if (mutations[0]){
-//     persist()
-//   }
-// }, {
-//   childList: true
-// })
-
-// const ch = ref<HTMLElement | null>(null)
-
-// watch(() => el.value?.firstElementChild?.attributes, (newValue, oldValue) => {
-//   console.log(el)
-// }, {immediate: true, deep: true})
 
 // @ts-ignore this area isn't quite ts ready
 const draggable = useDraggable(el, faves, sortableOptions)
+
+// need to register updates when added or destroyed
+faveStore.setSortableInstance(draggable.toArray)
+
 </script>
 
 <template>
   <UContainer>
     <h2 class="text-xl leading-10">Favorites List</h2>
 
+    <div v-if="pending" class="flex flex-col items-start gap-2">
+      <USkeleton class="h-10 w-[190px]" />
+      <USkeleton class="h-10 w-[190px]" />
+    </div>
     <div class="inline-block" ref="el">
-      <div v-for="fave in faves" :key="fave.id" :data-id="fave.id" v-if="!loadingOrder"
+      <div v-for="fave in faves" :key="fave.id" :data-id="fave.id" v-if="!pending" ref="st"
         class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25">
-        <UIcon name="i-heroicons-arrows-up-down" class="handle" />
+        <UIcon name="i-heroicons-arrows-up-down" class="handle cursor-grab" />
         <p class="m-1 mx-2 flex-grow text-sm">
           {{ fave.firstName?.name }} {{ fave.middleName?.name }} King
         </p>
