@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     head: {
       meta: [
         { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },  
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
       ]
     }
   },
@@ -22,5 +22,6 @@ export default defineNuxtConfig({
     preference: 'light'
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/ui']
+  modules: ['@nuxt/ui', '@pinia/nuxt',
+  ]
 })

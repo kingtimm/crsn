@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useFaves from "~/composables/faves";
+import {useFaves} from "~/stores/faves";
 import type { Name } from "~/server/db/schema"
 const toast = useToast()
 const { addFave } = useFaves()

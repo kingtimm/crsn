@@ -26,3 +26,8 @@ export const favoriteRelations = relations(faves, ({ one }) => ({
     references: [names.id],
   }),
 }))
+
+export const favesSortState = sqliteTable('favesSortState', {
+  id: integer('id').primaryKey(),
+  state: text('state', { mode:'json' })
+})
