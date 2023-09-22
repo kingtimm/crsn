@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, type InferSelectModel } from 'drizzle-orm';
+import { unique } from 'drizzle-orm/sqlite-core';
 
 export const names = sqliteTable('names', {
   id: integer('id').primaryKey(),
@@ -14,7 +15,9 @@ export const faves = sqliteTable('faves', {
   firstName: integer('first_name_id').references(() => names.id),
   middleName: integer('middle_name_id').references(() => names.id),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-})
+}, (t)=> ({
+  unq: unique().on(t.firstName, t.middleName)
+}))
 
 export const favoriteRelations = relations(faves, ({ one }) => ({
   firstName: one(names, {

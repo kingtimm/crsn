@@ -36,10 +36,12 @@ async function addName() {
 
 async function deleteName(name) {
   const { error } = await useFetch(`/api/names/${name.id}`, { method: 'DELETE' })
-  if (error) {
-    createError({
-      message: `${error.value?.message}`
-    })
+  if (error.value) {
+    // createError({
+    //   message: `${error.value?.message}`
+    // })
+    toast.add({ title: `Please delete favorites using name ${name.name} before deleting.`, icon: 'i-heroicons-x-mark-20-solid', color: 'red'})
+    return
   }
   names.value = names.value.filter(t => t.id !== name.id)
   toast.add({ title: `Name "${name.name}" deleted.` })

@@ -67,19 +67,32 @@ export const useFaves = defineStore('faves', () => {
       loading.value = true
 
       try {
-        const { data: fave, } = await useFetch('/api/faves', {
+        const { data: fave, error, status } = await useFetch('/api/faves', {
           method: 'POST',
           body: {
             firstNameId: `${firstName.id}`,
             middleNameId: `${middleName.id}`
           }
         })
+        if (error.value) {
+          console.log(error.value.data)
+          if(error.value.data?.message.includes('UNIQUE'))
+          {
+            error.value.statusMessage = "Already added as a favorite"
+          }
+          toast.add({ title: error.value.statusMessage, color: 'red' })
+          createError(error.value)
+          return
+          
+        }
 
         // get the correct ids from sortable
         await refresh()
         await storeSortOrder(await getSortableArray())
 
         toast.add({ title: `Favorited` })
+
+
       } catch (err: any) {
         if (err.data?.data?.issues) {
           const title = err.data.data.issues.map((issue: any) => issue.message).join('\n')

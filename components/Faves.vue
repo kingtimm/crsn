@@ -6,6 +6,8 @@ import { useFaves } from '~/stores/faves';
 
 import { storeToRefs } from 'pinia'
 
+const isOpen = ref(false)
+
 const faveStore = useFaves()
 const { refresh, pending } = await faveStore.getStateFromDb()
 const { faves, sortState } = storeToRefs(faveStore)
@@ -36,7 +38,10 @@ faveStore.setSortableInstance(draggable.toArray)
 
 <template>
   <UContainer>
-    <h2 class="text-xl leading-10">Favorites List</h2>
+    <div class="flex gap-3 mb-4 items-center">
+      <h2 class="text-xl leading-10">Favorites List</h2>
+      <!-- <UButton class="h-min" icon="i-heroicons-plus" @click="isOpen = true" type="button">Add Favorite</UButton> -->
+    </div>
 
     <div v-if="pending" class="flex flex-col items-start gap-2">
       <USkeleton class="h-10 w-[190px]" />
@@ -53,4 +58,8 @@ faveStore.setSortableInstance(draggable.toArray)
       </div>
     </div>
   </UContainer>
+
+  <UModal v-model="isOpen" fullscreen>
+    <AddFaveDialog></AddFaveDialog>
+  </UModal>
 </template>
