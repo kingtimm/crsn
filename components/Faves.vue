@@ -1,21 +1,20 @@
 <script setup lang="ts">
-// import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
-import { useDraggable, type UseDraggableReturn } from 'vue-draggable-plus'
-import { useMutationObserver, useDebounceFn } from '@vueuse/core'
-import { useFaves } from '~/stores/faves';
-
 import { storeToRefs } from 'pinia'
-
-const isOpen = ref(false)
+import { useDraggable } from 'vue-draggable-plus'
+import { useNames } from '~/stores/names'
+import { useFaves } from '~/stores/faves'
 
 const faveStore = useFaves()
 const { refresh, pending } = await faveStore.getStateFromDb()
 const { faves, sortState } = storeToRefs(faveStore)
 
+const namesStore = useNames()
+const { names } = storeToRefs(namesStore)
+
 const el = ref<HTMLElement | null>(null)
 const st = ref([]) as Ref<Array<string>>
 
-// @ts-ignore this area isn't quite ts ready
+// @ts-expect-error this area isn't quite ts ready
 const sortableOptions = {
   name: 'faves',
   handle: '.handle',
@@ -24,42 +23,45 @@ const sortableOptions = {
       nextTick(async () => {
         await faveStore.storeSortOrder(sortable.toArray())
       })
-    }
+    },
   },
 }
 
-// @ts-ignore this area isn't quite ts ready
+// @ts-expect-error this area isn't quite ts ready
 const draggable = useDraggable(el, faves, sortableOptions)
 
 // need to register updates when added or destroyed
 faveStore.setSortableInstance(draggable.toArray)
 
+const newName = ref('')
+const loading = ref(false)
 </script>
 
 <template>
-  <UContainer>
-    <div class="flex gap-3 mb-4 items-center">
-      <h2 class="text-xl leading-10">Favorites List</h2>
-      <!-- <UButton class="h-min" icon="i-heroicons-plus" @click="isOpen = true" type="button">Add Favorite</UButton> -->
-    </div>
-
-    <div v-if="pending" class="flex flex-col items-start gap-2">
-      <USkeleton class="h-10 w-[190px]" />
-      <USkeleton class="h-10 w-[190px]" />
-    </div>
-    <div class="inline-block" ref="el">
-      <div v-for="fave in faves" :key="fave.id" :data-id="fave.id" v-if="!pending" ref="st"
-        class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25">
-        <UIcon name="i-heroicons-arrows-up-down" class="handle cursor-grab" />
-        <p class="m-1 mx-2 flex-grow text-sm">
-          {{ fave.firstName?.name }} {{ fave.middleName?.name }} King
-        </p>
-        <UButton class="h-min" size="2xs" icon="i-heroicons-x-mark-20-solid" @click="faveStore.deleteFave(fave.id)" />
+  <UContainer class="my-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <h2 class="text-xl">
+          Favorites List
+        </h2>
+        <div v-if="pending" class="py-2 flex flex-col items-start gap-2">
+          <USkeleton class="h-10 w-[190px]" />
+          <USkeleton class="h-10 w-[190px]" />
+        </div>
+        <div v-else ref="el" class="inline-block">
+          <div
+            v-for="fave in faves" :key="fave.id" ref="st" :data-id="fave.id"
+            class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25"
+          >
+            <UIcon name="i-heroicons-arrows-up-down" class="handle cursor-grab" />
+            <p class="m-1 mx-2 flex-grow text-sm">
+              {{ fave.firstName?.name }} {{ fave.middleName?.name }} King
+            </p>
+            <UButton class="h-min" size="2xs" icon="i-heroicons-x-mark-20-solid" @click="faveStore.deleteFave(fave.id)" />
+          </div>
+        </div>
       </div>
+      <AddFave class="py-2" />
     </div>
   </UContainer>
-
-  <UModal v-model="isOpen" fullscreen>
-    <AddFaveDialog></AddFaveDialog>
-  </UModal>
 </template>

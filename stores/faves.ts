@@ -1,10 +1,10 @@
-import { Name } from "~/server/db/schema";
-import { defineStore } from "pinia"
+import { defineStore } from 'pinia'
+import type { Name } from '~/server/db/schema'
 
 interface Row {
-  id: number,
-  firstName?: string;
-  middleName?: string;
+  id: number
+  firstName?: string
+  middleName?: string
   createdAt: string
 }
 
@@ -19,10 +19,10 @@ export const useFaves = defineStore('faves', () => {
 
   const _sortableInstance = {
     // by default this will just give the value, but the faves component takes this over
-    fn: () => sortState.value
+    fn: () => sortState.value,
   }
 
-  function setSortableInstance(fn: (()=>SortArray)) {
+  function setSortableInstance(fn: (() => SortArray)) {
     _sortableInstance.fn = fn
     return _sortableInstance.fn
   }
@@ -45,8 +45,8 @@ export const useFaves = defineStore('faves', () => {
     return await useLazyFetch('/api/faves/sort', {
       method: 'PUT',
       body: {
-        state: arr
-      }
+        state: arr,
+      },
     })
   }
 
@@ -60,6 +60,7 @@ export const useFaves = defineStore('faves', () => {
   }
 
   async function addFave(randomNames: Name[] | null) {
+    console.log('  hit addfave', randomNames)
     if (randomNames) {
       const firstName = randomNames[0]
       const middleName = randomNames[1]
@@ -71,29 +72,26 @@ export const useFaves = defineStore('faves', () => {
           method: 'POST',
           body: {
             firstNameId: `${firstName.id}`,
-            middleNameId: `${middleName.id}`
-          }
+            middleNameId: `${middleName.id}`,
+          },
         })
         if (error.value) {
           console.log(error.value.data)
-          if(error.value.data?.message.includes('UNIQUE'))
-          {
-            error.value.statusMessage = "Already added as a favorite"
-          }
+          if (error.value.data?.message.includes('UNIQUE'))
+            error.value.statusMessage = 'Already added as a favorite'
+
           toast.add({ title: error.value.statusMessage, color: 'red' })
           createError(error.value)
           return
-          
         }
 
         // get the correct ids from sortable
         await refresh()
         await storeSortOrder(await getSortableArray())
 
-        toast.add({ title: `Favorited` })
-
-
-      } catch (err: any) {
+        toast.add({ title: 'Favorited' })
+      }
+      catch (err: any) {
         if (err.data?.data?.issues) {
           const title = err.data.data.issues.map((issue: any) => issue.message).join('\n')
           toast.add({ title, color: 'red' })
@@ -107,14 +105,15 @@ export const useFaves = defineStore('faves', () => {
     try {
       await useFetch(`/api/faves/${id}`, { method: 'DELETE' })
 
-      if (faves.value) {
+      if (faves.value)
         faves.value = faves.value.filter(t => t.id !== id)
-      }
+
       // get the correct ids from sortable
       await refresh()
       await storeSortOrder(await getSortableArray())
-      toast.add({ title: `Fave deleted.` })
-    } catch (err: any) {
+      toast.add({ title: 'Fave deleted.' })
+    }
+    catch (err: any) {
       if (err.data?.data?.issues) {
         const title = err.data.data.issues.map((issue: any) => issue.message).join('\n')
         toast.add({ title, color: 'red' })
@@ -135,15 +134,14 @@ export const useFaves = defineStore('faves', () => {
   }
 
   return {
-    sortState,
-    deleteFave,
-    faves,
-    refresh,
     addFave,
+    deleteFave,
+    refresh,
+    sortState,
+    faves,
     loading,
     getStateFromDb,
     storeSortOrder,
-    setSortableInstance
+    setSortableInstance,
   }
-}
-)
+})

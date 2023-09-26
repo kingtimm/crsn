@@ -1,12 +1,13 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-import { relations, type InferSelectModel } from 'drizzle-orm';
-import { unique } from 'drizzle-orm/sqlite-core';
+import { integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
+import { type InferSelectModel, relations } from 'drizzle-orm'
 
 export const names = sqliteTable('names', {
   id: integer('id').primaryKey(),
   name: text('name').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-})
+}, t => ({
+  unq: unique().on(t.name),
+}))
 
 export type Name = InferSelectModel<typeof names>
 
@@ -15,8 +16,8 @@ export const faves = sqliteTable('faves', {
   firstName: integer('first_name_id').references(() => names.id),
   middleName: integer('middle_name_id').references(() => names.id),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-}, (t)=> ({
-  unq: unique().on(t.firstName, t.middleName)
+}, t => ({
+  unq: unique().on(t.firstName, t.middleName),
 }))
 
 export const favoriteRelations = relations(faves, ({ one }) => ({
@@ -32,5 +33,5 @@ export const favoriteRelations = relations(faves, ({ one }) => ({
 
 export const favesSortState = sqliteTable('favesSortState', {
   id: integer('id').primaryKey(),
-  state: text('state', { mode:'json' })
+  state: text('state', { mode: 'json' }),
 })

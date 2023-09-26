@@ -1,11 +1,11 @@
 
 
 <template>
-  <div>
-    <UContainer>
-      <Random />
-    </UContainer>
+    <div class="">
+      <UContainer class="">
+        <Random />
+      </UContainer>
+      <Faves />
+    </div>
    <NamesBank />
-   <Faves />
-  </div>
 </template>

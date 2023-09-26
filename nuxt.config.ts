@@ -9,8 +9,8 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
-      ]
-    }
+      ],
+    },
   },
   runtimeConfig: {
     dbDir: resolve('./server/db'),
@@ -19,9 +19,8 @@ export default defineNuxtConfig({
     icons: ['heroicons', 'simple-icons'],
   },
   colorMode: {
-    preference: 'light'
+    preference: 'light',
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@pinia/nuxt',
-  ]
+  modules: ['@nuxt/ui', '@pinia/nuxt'],
 })

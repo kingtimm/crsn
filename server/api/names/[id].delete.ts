@@ -1,9 +1,9 @@
-import { eq, and } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { useValidatedParams, zh } from 'h3-zod'
 
 export default eventHandler(async (event) => {
   const { id } = await useValidatedParams(event, {
-    id: zh.intAsString
+    id: zh.intAsString,
   })
 
   // List todos for the current user
@@ -14,18 +14,20 @@ export default eventHandler(async (event) => {
     if (!deletedTodo) {
       throw createError({
         statusCode: 404,
-        message: 'Todo not found'
+        message: 'Todo not found',
       })
     }
     return deletedTodo
-  } catch (error) {
-    // @ts-ignore
+  }
+  catch (error) {
+    // @ts-expect-error
     if (error?.message.includes('SQLITE_CONSTRAINT')) {
       throw createError({
         statusCode: 500,
-        message: "This name is in favorites. Please delete favorites with this name first."
+        message: 'This name is in favorites. Please delete favorites with this name first.',
       })
-    } else {
+    }
+    else {
       throw error
     }
   }

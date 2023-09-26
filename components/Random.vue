@@ -15,11 +15,10 @@ const fullName = computed(() => {
 </script>
 
 <template>
-  <UCard class="flex gap-3">
-    <p class="font-thin text-2xl leading-none pb-3">{{ fullName }}</p>
-    <UButton class="mr-4" type="button" icon="i-heroicons-arrow-path" @click="refresh" :disabled="pending">Generate
-    </UButton>
-    <UButton class="mr-4" type="button" icon="i-heroicons-heart" @click="addFave(randomNameResponse)" :disabled="pending">Favorite
-    </UButton>
-  </UCard>
+  <h2 class="text-xl">Inspiration</h2>
+  <p class="text-3xl leading-none py-3 text-primary">{{ fullName }}</p>
+  <UButton class="mr-4" type="button" icon="i-heroicons-arrow-path" @click="refresh" :disabled="pending">Generate New
+  </UButton>
+  <UButton class="mr-4" type="button" icon="i-heroicons-heart" @click="addFave(randomNameResponse)" :disabled="pending">Favorite
+  </UButton>
 </template>

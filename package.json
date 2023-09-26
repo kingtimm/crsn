@@ -1,7 +1,7 @@
 {
   "name": "nuxt-app",
-  "private": true,
   "type": "module",
+  "private": true,
   "module": "esnext",
   "scripts": {
     "build": "nuxt build",
@@ -13,17 +13,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "devDependencies": {
-    "@antfu/eslint-config": "^1.0.0-beta.3",
-    "@nuxt/devtools": "latest",
-    "drizzle-kit": "^0.19.13",
-    "eslint": "^8.49.0",
-    "nuxt": "^3.7.3"
-  },
   "dependencies": {
     "@iconify-json/simple-icons": "^1.1.71",
     "@libsql/client": "^0.3.4",
-    "@nuxt/ui": "^2.8.1",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
     "@nuxtjs/color-mode": "^3.3.0",
     "@pinia/nuxt": "^0.4.11",
     "@vueuse/core": "^10.4.1",
@@ -32,5 +25,12 @@
     "h3-zod": "^0.5.1",
     "sortablejs": "^1.15.0",
     "vue-draggable-plus": "^0.2.6"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^1.0.0-beta.10",
+    "@nuxt/devtools": "latest",
+    "drizzle-kit": "^0.19.13",
+    "eslint": "^8.50.0",
+    "nuxt": "^3.7.3"
   }
 }
