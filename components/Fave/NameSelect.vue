@@ -67,13 +67,11 @@ const selectedName = computed({
     </template>
 
     <template #option="{ option: name }">
-      <span class="flex-shrink-0 w-2 h-2 mt-px rounded-full" />
       <span class="truncate">{{ name.name }}</span>
     </template>
 
     <template #option-create="{ option: name }">
-      <span class="flex-shrink-0">New name:</span>
-      <span class="flex-shrink-0 w-2 h-2 mt-px rounded-full -mx-1" />
+      <span class="flex-shrink-0"><UIcon name="i-heroicons-plus"></UIcon></span>
       <span class="block truncate">{{ name.name }}</span>
     </template>
   </USelectMenu>
