@@ -23,7 +23,7 @@ function handle(field: string, value: SerializedName) {
 </script>
 
 <template>
-  <form class="flex flex-col gap-2 z-10"
+  <form class="flex flex-col gap-2"
     @submit.prevent="(firstName && middleName) && favesStore.addFave([firstName, middleName])">
     <p>{{ fullName }}</p>
     <div class="flex gap-4">
