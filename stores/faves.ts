@@ -109,7 +109,6 @@ export const useFaves = defineStore('faves', () => {
         faves.value = faves.value.filter(t => t.id !== id)
 
       // get the correct ids from sortable
-      await refresh()
       await storeSortOrder(await getSortableArray())
       toast.add({ title: 'Fave deleted.' })
     }
