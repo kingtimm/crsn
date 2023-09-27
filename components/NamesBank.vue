@@ -11,7 +11,7 @@ const newNameInput = ref(null)
 <template>
   <UCard>
     <template #header>
-      <h2 class="text-xl">
+      <h2>
         Names List
       </h2>
     </template>

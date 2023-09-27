@@ -10,6 +10,9 @@ export default defineNuxtConfig({
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
       ],
+      bodyAttrs: {
+        class: ['bg-gray-200', 'dark:bg-gray-950']
+      }
     },
   },
   runtimeConfig: {
@@ -17,6 +20,7 @@ export default defineNuxtConfig({
   },
   ui: {
     icons: ['heroicons', 'simple-icons'],
+    safelistColors: ['primary', 'gray']
   },
   colorMode: {
     preference: 'light',

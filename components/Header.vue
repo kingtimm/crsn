@@ -11,7 +11,7 @@ const isDark = computed({
 </script>
 
 <template>
-  <UContainer class="flex items-baseline gap-4">
+  <UContainer class="flex items-center gap-4 mb-4 rounded-b-lg max-w-4xl">
     <h1 class="text-2xl font-semibold py-4">
       <NuxtLink to="/">
         Baby Names

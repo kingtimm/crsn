@@ -40,13 +40,13 @@ const loading = ref(false)
 <template>
   <UCard>
     <template #header>
-      <h2 class="text-xl">
+      <h2>
         Favorites List
       </h2>
     </template>
     <div v-if="pending" class="py-2 flex flex-col items-start gap-2">
-      <USkeleton class="h-10 w-[190px]" />
-      <USkeleton class="h-10 w-[190px]" />
+      <USkeleton class="h-10 w-full" />
+      <USkeleton class="h-10 w-full" />
     </div>
     <div v-else ref="el" class="flex flex-col">
       <div v-for="fave in faves" :key="fave.id" ref="st" :data-id="fave.id"

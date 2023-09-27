@@ -17,7 +17,7 @@ const fullName = computed(() => {
 <template>
   <UCard class="overflow-visible">
     <template #header>
-      <h2 class="text-xl">
+      <h2>
         Inspiration
       </h2>
     </template>
