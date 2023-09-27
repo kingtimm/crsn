@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 
-export default eventHandler(async (event) => {
+export default eventHandler(async (_event) => {
   // List names for the current user
   const state = await useDb()?.query.favesSortState.findFirst({
     where: eq(tables.favesSortState.id, 1),

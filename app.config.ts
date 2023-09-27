@@ -4,8 +4,8 @@ export default defineAppConfig({
     gray: 'neutral',
     card: {
       header: {
-        base: 'text-lg'
-      }
-    }
-  }
+        base: 'text-lg',
+      },
+    },
+  },
 })

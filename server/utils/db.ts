@@ -1,9 +1,7 @@
 import { createClient as createLibSQLClient } from '@libsql/client/http'
 import { drizzle as drizzleLibSQL } from 'drizzle-orm/libsql'
 
-// @ts-expect-error
 import * as schema from '~/server/db/schema'
-
 export * as tables from '~/server/db/schema'
 
 const config = { schema }

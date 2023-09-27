@@ -2,7 +2,6 @@
 import { useFaves } from '~/stores/faves'
 import type { Name } from '~/server/db/schema'
 
-const toast = useToast()
 const { addFave } = useFaves()
 const { data: randomNameResponse, refresh, pending } = await useFetch<Name[]>('/api/names/random')
 
@@ -33,7 +32,7 @@ const fullName = computed(() => {
           Favorite
         </UButton>
       </div>
-      <AddFave class=""></AddFave>
+      <AddFave class="" />
     </div>
   </UCard>
 </template>

@@ -5,7 +5,7 @@ import { useNames } from '~/stores/names'
 const namesStore = useNames()
 const { names, loading } = storeToRefs(namesStore)
 const newName = ref('')
-const newNameInput = ref(null)
+const newNameInput = ref()
 </script>
 
 <template>

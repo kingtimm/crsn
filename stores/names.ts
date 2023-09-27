@@ -42,13 +42,13 @@ export const useNames = defineStore('names', () => {
         return
       }
 
-      if (names.value && addedNames.value) {       
+      if (names.value && addedNames.value) {
         const message: string[] = []
         for (const addedName of addedNames.value) {
           names.value?.push(addedName)
           message.push(addedName.name)
         }
-        
+
         toast.add({ title: `"${message.join()}" created.` })
         if (newNameInput) {
           newNameInput.value = ''
@@ -74,7 +74,6 @@ export const useNames = defineStore('names', () => {
   }
 
   async function deleteName(name: SerializedName) {
-    console.log(name)
     const { error } = await useFetch(`/api/names/${name.id}`, { method: 'DELETE' })
     if (error.value) {
       toast.add({ title: `Please delete favorites using name ${name.name} before deleting.`, icon: 'i-heroicons-x-mark-20-solid', color: 'red' })

@@ -1,13 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Name } from '~/server/db/schema'
 
-interface Row {
-  id: number
-  firstName?: string
-  middleName?: string
-  createdAt: string
-}
-
 export type SortArray = string[]
 
 export const useFaves = defineStore('faves', () => {
@@ -60,7 +53,6 @@ export const useFaves = defineStore('faves', () => {
   }
 
   async function addFave(randomNames: Omit<Name, 'createdAt'>[] | null) {
-    console.log('  hit addfave', randomNames)
     if (randomNames) {
       const firstName = randomNames[0]
       const middleName = randomNames[1]
@@ -68,7 +60,7 @@ export const useFaves = defineStore('faves', () => {
       loading.value = true
 
       try {
-        const { data: fave, error, status } = await useFetch('/api/faves', {
+        const { error } = await useFetch('/api/faves', {
           method: 'POST',
           body: {
             firstNameId: `${firstName.id}`,
@@ -76,7 +68,6 @@ export const useFaves = defineStore('faves', () => {
           },
         })
         if (error.value) {
-          console.log(error.value.data)
           if (error.value.data?.message.includes('UNIQUE'))
             error.value.statusMessage = 'Already added as a favorite'
 

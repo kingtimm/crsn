@@ -1,20 +1,15 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useDraggable } from 'vue-draggable-plus'
-import { useNames } from '~/stores/names'
 import { useFaves } from '~/stores/faves'
 
 const faveStore = useFaves()
-const { refresh, pending } = await faveStore.getStateFromDb()
-const { faves, sortState } = storeToRefs(faveStore)
-
-const namesStore = useNames()
-const { names } = storeToRefs(namesStore)
+const { pending } = await faveStore.getStateFromDb()
+const { faves } = storeToRefs(faveStore)
 
 const el = ref<HTMLElement | null>(null)
 const st = ref([]) as Ref<Array<string>>
 
-// @ts-expect-error this area isn't quite ts ready
 const sortableOptions = {
   name: 'faves',
   handle: '.handle',
@@ -32,16 +27,13 @@ const draggable = useDraggable(el, faves, sortableOptions)
 
 // need to register updates when added or destroyed
 faveStore.setSortableInstance(draggable.toArray)
-
-const newName = ref('')
-const loading = ref(false)
 </script>
 
 <template>
   <UCard>
     <template #header>
       <h2>
-        Favorites List
+        Ideas
       </h2>
     </template>
     <div v-if="pending" class="py-2 flex flex-col items-start gap-2">
@@ -49,8 +41,10 @@ const loading = ref(false)
       <USkeleton class="h-10 w-full" />
     </div>
     <div v-else ref="el" class="flex flex-col">
-      <div v-for="fave in faves" :key="fave.id" ref="st" :data-id="fave.id"
-        class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25">
+      <div
+        v-for="fave in faves" :key="fave.id" ref="st" :data-id="fave.id"
+        class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25"
+      >
         <UIcon name="i-heroicons-arrows-up-down" class="handle cursor-grab" />
         <p class="m-1 mx-2 flex-grow text-sm">
           {{ fave.firstName?.name }} {{ fave.middleName?.name }} King

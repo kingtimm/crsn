@@ -11,8 +11,8 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1' },
       ],
       bodyAttrs: {
-        class: ['bg-gray-200', 'dark:bg-gray-950']
-      }
+        class: ['bg-gray-200', 'dark:bg-gray-950'],
+      },
     },
   },
   runtimeConfig: {
@@ -20,11 +20,11 @@ export default defineNuxtConfig({
   },
   ui: {
     icons: ['heroicons', 'simple-icons'],
-    safelistColors: ['primary', 'gray']
+    safelistColors: ['primary', 'gray'],
   },
   colorMode: {
     preference: 'light',
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@pinia/nuxt'],
+  modules: ['@nuxt/ui', '@pinia/nuxt', 'nuxt-vitest'],
 })

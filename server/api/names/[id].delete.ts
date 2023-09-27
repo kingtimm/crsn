@@ -20,7 +20,7 @@ export default eventHandler(async (event) => {
     return deletedTodo
   }
   catch (error) {
-    // @ts-expect-error
+    // @ts-expect-error need to type errors for the catch
     if (error?.message.includes('SQLITE_CONSTRAINT')) {
       throw createError({
         statusCode: 500,
