@@ -20,15 +20,22 @@ function handle(field: string, value: SerializedName) {
   else
     middleName.value = value
 }
+
+const topRef = ref()
+
+function goTo() {
+  topRef.value?.scrollIntoView({behavior: "smooth"}) 
+}
+
 </script>
 
 <template>
-  <form class="flex flex-col gap-2"
+  <form class="flex flex-col gap-2" ref="topRef"
     @submit.prevent="(firstName && middleName) && favesStore.addFave([firstName, middleName])">
     <p>{{ fullName }}</p>
     <div class="flex gap-4">
-      <FaveNameSelect class="flex-grow" field-name="First Name" @change="handle" />
-      <FaveNameSelect class="flex-grow" field-name="Middle Name" @change="handle" />
+      <FaveNameSelect class="flex-grow" field-name="First Name" @change="handle" @click="goTo()" />
+      <FaveNameSelect class="flex-grow" field-name="Middle Name" @change="handle" @click="goTo()" />
       <UButton class="w-min" type="submit" icon="i-heroicons-plus-20-solid" :disabled="!firstName || !middleName" />
     </div>
   </form>
