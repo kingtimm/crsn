@@ -9,11 +9,13 @@ const newNameInput = ref(null)
 </script>
 
 <template>
-  <UContainer class="my-4">
-    <h2 class="text-xl">
-      Names List
-    </h2>
-    <form class="flex items-center gap-2 py-4 text-lg" @submit.prevent="namesStore.addName(newName, newNameInput)">
+  <UCard>
+    <template #header>
+      <h2 class="text-xl">
+        Names List
+      </h2>
+    </template>
+    <form class="flex items-center gap-2 py-2 text-lg" @submit.prevent="namesStore.addName(newName, newNameInput)">
       <UInput
         ref="newNameInput" v-model="newName" name="name" :disabled="loading" class="flex-1"
         placeholder="New First/Middle Name" autocomplete="off" autofocus :ui="{ wrapper: 'flex-1' }"
@@ -35,5 +37,5 @@ const newNameInput = ref(null)
         <UButton variant="ghost" size="2xs" icon="i-heroicons-x-mark-20-solid" @click="namesStore.deleteName(name)" />
       </UBadge>
     </div>
-  </UContainer>
+  </UCard>
 </template>

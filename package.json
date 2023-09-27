@@ -14,6 +14,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@antfu/eslint-config": "^1.0.0-beta.11",
     "@iconify-json/simple-icons": "^1.1.71",
     "@libsql/client": "^0.3.4",
     "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
@@ -22,15 +23,14 @@
     "@vueuse/core": "^10.4.1",
     "@vueuse/integrations": "^10.4.1",
     "drizzle-orm": "^0.28.6",
+    "eslint": "^8.50.0",
     "h3-zod": "^0.5.1",
     "sortablejs": "^1.15.0",
     "vue-draggable-plus": "^0.2.6"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^1.0.0-beta.10",
     "@nuxt/devtools": "latest",
     "drizzle-kit": "^0.19.13",
-    "eslint": "^8.50.0",
     "nuxt": "^3.7.3"
   }
 }

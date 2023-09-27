@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import type { tables } from '~/server/utils/db'
 
-export interface SerializedName extends Omit<tables.Name, 'createdAt'> {
-  createdAt?: string
+export type SerializedName = Omit<tables.Name, 'createdAt'> & {
+  createdAt: string
 }
 
 export const useNames = defineStore('names', () => {
@@ -18,14 +18,14 @@ export const useNames = defineStore('names', () => {
     loading.value = false
   }
 
-  async function addName(newName: string, newNameInput?: Ref<any>) {
+  async function addName(newName: string, newNameInput: Ref<any>) {
     if (!newName.trim())
       return
 
     loading.value = true
 
     try {
-      const { data: name, error } = await useFetch<SerializedName[]>('/api/names', {
+      const { data: addedNames, error } = await useFetch<SerializedName[]>('/api/names', {
         method: 'POST',
         body: {
           name: newName,
@@ -42,9 +42,14 @@ export const useNames = defineStore('names', () => {
         return
       }
 
-      if (names.value && name.value) {
-        name.value.map((i: SerializedName) => names.value?.push(i))
-        toast.add({ title: `Name "${name.value.toString()}" created.` })
+      if (names.value && addedNames.value) {       
+        const message: string[] = []
+        for (const addedName of addedNames.value) {
+          names.value?.push(addedName)
+          message.push(addedName.name)
+        }
+        
+        toast.add({ title: `"${message.join()}" created.` })
         if (newNameInput) {
           newNameInput.value = ''
           await nextTick(() => {
@@ -53,6 +58,7 @@ export const useNames = defineStore('names', () => {
           })
         }
       }
+      return addedNames
     }
     catch (err) {
       // @ts-expect-error this area doesn't work

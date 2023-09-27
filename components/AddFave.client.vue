@@ -2,19 +2,19 @@
 import { type SerializedName } from '~/stores/names'
 import { useFaves } from '~/stores/faves'
 
-const firstName: Ref<SerializedName> = ref()
-const middleName: Ref<SerializedName> = ref()
+const firstName: Ref<SerializedName | null> = ref(null)
+const middleName: Ref<SerializedName | null> = ref(null)
 
 const favesStore = useFaves()
 
 const fullName = computed(() => {
   if (!firstName.value || !middleName.value)
-    return 'Select names'
+    return 'Add Favorite'
 
   return `${firstName.value.name} ${middleName.value.name} King`
 })
 
-function handle(field, value) {
+function handle(field: string, value: SerializedName) {
   if (field === 'First Name')
     firstName.value = value
   else
@@ -23,15 +23,13 @@ function handle(field, value) {
 </script>
 
 <template>
-  <UFormGroup label="Add Favorite" name="name">
-    <form class="flex flex-col gap-4" @submit.prevent="favesStore.addFave([firstName, middleName]) ">
-      <FaveNameSelect field-name="First Name" @change="handle" />
-      <FaveNameSelect field-name="Middle Name" @change="handle" />
-      <p>{{ fullName }}</p>
-      <UButton
-        class="w-min" type="submit" icon="i-heroicons-plus-20-solid"
-        :disabled="!firstName || !middleName"
-      />
-    </form>
-  </UFormGroup>
+  <form class="flex flex-col gap-2"
+    @submit.prevent="(firstName && middleName) && favesStore.addFave([firstName, middleName])">
+    <p>{{ fullName }}</p>
+    <div class="flex gap-4">
+      <FaveNameSelect class="flex-grow" field-name="First Name" @change="handle" />
+      <FaveNameSelect class="flex-grow" field-name="Middle Name" @change="handle" />
+      <UButton class="w-min" type="submit" icon="i-heroicons-plus-20-solid" :disabled="!firstName || !middleName" />
+    </div>
+  </form>
 </template>

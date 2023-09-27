@@ -1,11 +1,5 @@
-
-
 <template>
-    <div class="">
-      <UContainer class="">
-        <Random />
-      </UContainer>
-      <Faves />
-    </div>
-   <NamesBank />
+  <Inspiration />
+  <Faves />
+  <NamesBank />
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watchArray } from '@vueuse/core';
 import { storeToRefs } from 'pinia'
 import { type SerializedName, useNames } from '~/stores/names'
 
@@ -7,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'change', field: string, name: string): void
+  (e: 'change', field: string, name: SerializedName): void
 }>()
 
 const namesStore = useNames()
@@ -19,9 +20,18 @@ const namesAlphabetical = computed(() => {
   return [...names.value].sort((a, b) => a.name.localeCompare(b.name))
 })
 
+watchArray(namesAlphabetical, (_newList, _oldList, _added, removed) => {
+  if (selected.value && removed) {
+    console.log('removed', removed)
+    if(selected.value.name === removed[0]?.name){
+      selected.value = null
+    }
+  }
+})
+
 const selectedName = computed({
   get: () => selected.value,
-  set: async (newNameValue: Partial<SerializedName>) => {
+  set: async (newNameValue) => {
     const result = async () => {
       if (newNameValue?.id) {
         // should mean this already exists
@@ -29,30 +39,24 @@ const selectedName = computed({
       }
       else if (newNameValue) {
         // need to create a new one
-        const nameToCreate = {
-          name: newNameValue.name,
-          createdAt: new Date().toISOString(),
-        }
-        const { data } = await namesStore.addName(nameToCreate.name)
-        names.value.push(data.value)
+        const data = await namesStore.addName(newNameValue.name)
+        // names.value.push(data.value)
         // todo: persist to api
-        return data.value
+        if (Array.isArray(data?.value) && data?.value[0]) {
+          return data.value[0]
+        }
       }
-      else {
-        return null
-      }
+      return null
     }
     selected.value = await result()
-    emit('change', props.fieldName, selected.value)
+    if (selected.value) emit('change', props.fieldName, selected.value)
   },
 })
 </script>
 
 <template>
-  <USelectMenu
-    v-model="selectedName" by="id" name="names" :options="namesAlphabetical" option-attribute="name" searchable
-    creatable
-  >
+  <USelectMenu v-model="selectedName" by="id" name="names" :options="namesAlphabetical" option-attribute="name" searchable
+    creatable>
     <template #label>
       <template v-if="selectedName">
         {{ selectedName.name }}

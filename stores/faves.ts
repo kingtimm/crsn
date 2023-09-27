@@ -59,7 +59,7 @@ export const useFaves = defineStore('faves', () => {
     return { data, ...all }
   }
 
-  async function addFave(randomNames: Name[] | null) {
+  async function addFave(randomNames: Omit<Name, 'createdAt'>[] | null) {
     console.log('  hit addfave', randomNames)
     if (randomNames) {
       const firstName = randomNames[0]

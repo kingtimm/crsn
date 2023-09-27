@@ -38,30 +38,25 @@ const loading = ref(false)
 </script>
 
 <template>
-  <UContainer class="my-4">
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <h2 class="text-xl">
-          Favorites List
-        </h2>
-        <div v-if="pending" class="py-2 flex flex-col items-start gap-2">
-          <USkeleton class="h-10 w-[190px]" />
-          <USkeleton class="h-10 w-[190px]" />
-        </div>
-        <div v-else ref="el" class="inline-block">
-          <div
-            v-for="fave in faves" :key="fave.id" ref="st" :data-id="fave.id"
-            class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25"
-          >
-            <UIcon name="i-heroicons-arrows-up-down" class="handle cursor-grab" />
-            <p class="m-1 mx-2 flex-grow text-sm">
-              {{ fave.firstName?.name }} {{ fave.middleName?.name }} King
-            </p>
-            <UButton class="h-min" size="2xs" icon="i-heroicons-x-mark-20-solid" @click="faveStore.deleteFave(fave.id)" />
-          </div>
-        </div>
-      </div>
-      <AddFave class="py-2" />
+  <UCard>
+    <template #header>
+      <h2 class="text-xl">
+        Favorites List
+      </h2>
+    </template>
+    <div v-if="pending" class="py-2 flex flex-col items-start gap-2">
+      <USkeleton class="h-10 w-[190px]" />
+      <USkeleton class="h-10 w-[190px]" />
     </div>
-  </UContainer>
+    <div v-else ref="el" class="flex flex-col">
+      <div v-for="fave in faves" :key="fave.id" ref="st" :data-id="fave.id"
+        class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25">
+        <UIcon name="i-heroicons-arrows-up-down" class="handle cursor-grab" />
+        <p class="m-1 mx-2 flex-grow text-sm">
+          {{ fave.firstName?.name }} {{ fave.middleName?.name }} King
+        </p>
+        <UButton class="h-min" size="2xs" icon="i-heroicons-x-mark-20-solid" @click="faveStore.deleteFave(fave.id)" />
+      </div>
+    </div>
+  </UCard>
 </template>

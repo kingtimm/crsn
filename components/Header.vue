@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useCycleList } from '@vueuse/core'
-
 const colorMode = useColorMode()
 const isDark = computed({
   get() {
@@ -8,9 +6,8 @@ const isDark = computed({
   },
   set() {
     colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-  }
+  },
 })
-
 </script>
 
 <template>
@@ -22,8 +19,10 @@ const isDark = computed({
     </h1>
     <div class="m-3">
       <ClientOnly>
-        <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost"
-          aria-label="Theme" @click="isDark = !isDark" />
+        <UButton
+          :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost"
+          aria-label="Theme" @click="isDark = !isDark"
+        />
         <template #fallback>
           <div class="w-8 h-8" />
         </template>
