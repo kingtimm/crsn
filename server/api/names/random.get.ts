@@ -1,5 +1,4 @@
 import { eq, inArray } from 'drizzle-orm'
-import assertOwner from '~/server/utils/assertOwner'
 
 export default eventHandler(async (event) => {
   const { baby, user } = await assertOwner(event)

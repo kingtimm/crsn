@@ -1,7 +1,6 @@
 import type { InferInsertModel } from 'drizzle-orm'
 import { z } from 'h3-zod'
 import { tables } from '#imports'
-import assertOwner from '~/server/utils/assertOwner'
 
 const NameShape = z.object({
   name: z.string(),
@@ -33,9 +32,7 @@ export default eventHandler(async (event) => {
         } satisfies tables.NameToBaby
       })
 
-      const relationResults = await tx.insert(tables.namesToBabies).values(relations).returning().all()
-      console.log(nameResults)
-      console.log(relationResults)
+      await tx.insert(tables.namesToBabies).values(relations).returning().all()
       return nameResults
     }
     catch (error) {
