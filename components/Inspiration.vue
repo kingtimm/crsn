@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useFaves } from '~/stores/faves'
-import type { Name } from '~/server/db/schema'
 import { useBaby } from '~/stores/baby'
 
 const { addFave } = useFaves()
 const { babyId } = storeToRefs(useBaby())
-const { data: randomNameResponse, refresh, pending } = await useFetch<Name[]>('/api/names/random', { query: { babyId }, server: false })
+const { data: randomNameResponse, refresh, pending } = await useFetch('/api/names/random', { query: { babyId }, server: false })
 
 const fullName = computed(() => {
   if (randomNameResponse) {
-    const bothnames = randomNameResponse.value?.map(name => name.name)
-    return bothnames?.concat(['King']).join(' ')
+    const bothnames = randomNameResponse.value?.randoms.map(name => name.name)
+    return bothnames?.concat(randomNameResponse.value!.lastName).join(' ')
   }
 })
 </script>
@@ -31,7 +30,7 @@ const fullName = computed(() => {
         <UButton class="mr-4" type="button" icon="i-heroicons-arrow-path" :disabled="pending" @click="refresh">
           Generate
         </UButton>
-        <UButton class="mr-4" type="button" icon="i-heroicons-heart" :disabled="pending" @click="addFave(randomNameResponse)">
+        <UButton class="mr-4" type="button" icon="i-heroicons-heart" :disabled="pending" @click="addFave(randomNameResponse!.randoms)">
           Favorite
         </UButton>
       </div>

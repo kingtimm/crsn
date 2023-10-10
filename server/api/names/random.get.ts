@@ -21,6 +21,9 @@ export default eventHandler(async (event) => {
     const selected = shuffled.slice(0, 2)
 
     const randoms = await useDb()?.select().from(tables.names).where(inArray(tables.names.id, selected))
-    return randoms?.sort(() => 0.5 - Math.random())
+    return {
+      lastName: baby.lastName,
+      randoms: randoms?.sort(() => 0.5 - Math.random()),
+    }
   }
 })
