@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { expect, test } from 'vitest'
+import { expect } from 'vitest'
 
-test('my test', () => {
+it('my test', () => {
   // ... test with Nuxt environment!
   expect(true).toBe(true)
 })

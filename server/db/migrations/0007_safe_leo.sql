@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX `names_name_unique` ON `names` (`name`);

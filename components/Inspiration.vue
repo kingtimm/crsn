@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { useFaves } from '~/stores/faves'
 import type { Name } from '~/server/db/schema'
+import { useBaby } from '~/stores/baby'
 
 const { addFave } = useFaves()
-const { data: randomNameResponse, refresh, pending } = await useFetch<Name[]>('/api/names/random')
+const { babyId } = storeToRefs(useBaby())
+const { data: randomNameResponse, refresh, pending } = await useFetch<Name[]>('/api/names/random', { query: { babyId }, server: false })
 
 const fullName = computed(() => {
   if (randomNameResponse) {

@@ -17,6 +17,10 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     dbDir: resolve('./server/db'),
+    public: {
+      clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+    },
+    clerkSecretKey: process.env.CLERK_SECRET_KEY,
   },
   ui: {
     icons: ['heroicons', 'simple-icons'],
@@ -25,6 +29,15 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'light',
   },
-  devtools: { enabled: true },
+  devtools: {
+    enabled: true,
+
+    timeline: {
+      enabled: true,
+    },
+  },
   modules: ['@nuxt/ui', '@pinia/nuxt', 'nuxt-vitest'],
+  build: {
+    transpile: ['vue-clerk', '@clerk/clerk-js'],
+  },
 })

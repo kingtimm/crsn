@@ -1,5 +1,6 @@
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import type { tables } from '~/server/utils/db'
+import { useBaby } from '~/stores/baby'
 
 export type SerializedName = Omit<tables.Name, 'createdAt'> & {
   createdAt: string
@@ -10,7 +11,9 @@ export const useNames = defineStore('names', () => {
 
   const toast = useToast()
 
-  const { data: names, error } = useFetch('/api/names')
+  const { babyId } = storeToRefs(useBaby())
+
+  const { data: names, error } = useLazyFetch('/api/names', { query: { babyId } })
 
   if (error.value) {
     toast.add({ title: error.value.statusMessage, color: 'red' })
@@ -18,8 +21,8 @@ export const useNames = defineStore('names', () => {
     loading.value = false
   }
 
-  async function addName(newName: string, newNameInput: Ref<any>) {
-    if (!newName.trim())
+  async function addName(newName: Ref<string>, newNameInput: Ref<HTMLInputElement | null>) {
+    if (!newName.value.trim())
       return
 
     loading.value = true
@@ -27,9 +30,12 @@ export const useNames = defineStore('names', () => {
     try {
       const { data: addedNames, error } = await useFetch<SerializedName[]>('/api/names', {
         method: 'POST',
-        body: {
-          name: newName,
+        query: {
+          babyId: babyId.value,
         },
+        body: [{
+          name: newName.value,
+        }],
       })
 
       if (error.value) {
@@ -41,7 +47,7 @@ export const useNames = defineStore('names', () => {
         loading.value = false
         return
       }
-
+      // console.log('added names', addedNames)
       if (names.value && addedNames.value) {
         const message: string[] = []
         for (const addedName of addedNames.value) {
@@ -50,12 +56,12 @@ export const useNames = defineStore('names', () => {
         }
 
         toast.add({ title: `"${message.join()}" created.` })
-        if (newNameInput) {
-          newNameInput.value = ''
-          await nextTick(() => {
-            if (newNameInput.value?.input)
-              newNameInput.value?.input.focus()
-          })
+
+        if (newNameInput.value && newName.value) {
+          // clear the field
+          newName.value = ''
+          await nextTick()
+          newNameInput.value.focus()
         }
       }
       return addedNames
@@ -74,7 +80,12 @@ export const useNames = defineStore('names', () => {
   }
 
   async function deleteName(name: SerializedName) {
-    const { error } = await useFetch(`/api/names/${name.id}`, { method: 'DELETE' })
+    const { error } = await useFetch(`/api/names/${name.id}`, {
+      method: 'DELETE',
+      query: {
+        babyId: babyId.value,
+      },
+    })
     if (error.value) {
       toast.add({ title: `Please delete favorites using name ${name.name} before deleting.`, icon: 'i-heroicons-x-mark-20-solid', color: 'red' })
       return

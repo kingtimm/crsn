@@ -5,7 +5,12 @@ import { useNames } from '~/stores/names'
 const namesStore = useNames()
 const { names, loading } = storeToRefs(namesStore)
 const newName = ref('')
-const newNameInput = ref()
+const newNameInput = ref<HTMLInputElement | null>(null)
+
+async function addName() {
+  if (newNameInput.value !== null)
+    await namesStore.addName(newName, newNameInput)
+}
 </script>
 
 <template>
@@ -15,10 +20,10 @@ const newNameInput = ref()
         Names List
       </h2>
     </template>
-    <form class="flex items-center gap-2 py-2 text-lg" @submit.prevent="namesStore.addName(newName, newNameInput)">
+    <form class="flex items-center gap-2 py-2 text-lg" @submit.prevent="addName()">
       <UInput
         ref="newNameInput" v-model="newName" name="name" :disabled="loading" class="flex-1"
-        placeholder="New First/Middle Name" autocomplete="off" autofocus :ui="{ wrapper: 'flex-1' }"
+        placeholder="New First/Middle Name" autocomplete="off" :ui="{ wrapper: 'flex-1' }"
       />
 
       <UButton

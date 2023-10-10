@@ -1,12 +1,27 @@
-import { defineStore } from 'pinia'
-import type { Name } from '~/server/db/schema'
+import { defineStore, storeToRefs } from 'pinia'
+import { useBaby } from './baby'
+import type { FavesToBaby, Name } from '~/server/db/schema'
 
 export type SortArray = string[]
 
+type FaveResponse = Ref<{
+  id: number
+  firstName: {
+    name: string
+  } | null
+  middleName: {
+    name: string
+  } | null
+  position?: number | null
+}[]> | Ref<null>
+
 export const useFaves = defineStore('faves', () => {
   const loading = ref(false)
-  const { data: faves, refresh } = useFetch('/api/faves')
   const toast = useToast()
+  const faves = ref(null) as FaveResponse
+  const fetched = ref(false)
+
+  const { babyId } = storeToRefs(useBaby())
 
   const sortState = ref() as Ref<SortArray>
 
@@ -26,30 +41,64 @@ export const useFaves = defineStore('faves', () => {
     return srt
   }
 
+  // Gets the position and id for update
+  function getSortPutArray() {
+    if (fetched && faves.value) {
+      return faves.value.map((row) => {
+        const position = sortState.value.indexOf(row.id.toString()) ?? -1
+        return {
+          faveId: row.id,
+          position,
+        } satisfies Partial<FavesToBaby>
+      })
+    }
+    return []
+  }
+
   async function storeSortOrder(arr: SortArray) {
     // putting in next tick
     await nextTick()
     sortState.value = arr
     updateFavesOrder(sortState.value)
-    await persistStateToDb(sortState.value)
+    await persistStateToDb()
   }
 
-  async function persistStateToDb(arr: SortArray) {
-    return await useLazyFetch('/api/faves/sort', {
+  async function persistStateToDb() {
+    const body = getSortPutArray()
+    return await useFetch('/api/faves/sort', {
       method: 'PUT',
-      body: {
-        state: arr,
-      },
+      server: false,
+      lazy: true,
+      query: { babyId },
+      body,
     })
   }
 
-  async function getStateFromDb() {
-    const { data, ...all } = await useLazyFetch<SortArray>('/api/faves/sort')
-    if (data.value) {
-      sortState.value = data.value
-      updateFavesOrder(sortState.value)
+  // this updates the data store with the array value either from sortable
+  function updateFavesOrder(arr: SortArray) {
+    const order = arr.map((x: string) => Number(x))
+    if (faves.value) {
+      faves.value = [...faves.value].sort((a, b) => {
+        const first = order.indexOf(a.id)
+        const second = order.indexOf(b.id)
+        return (first - second)
+      })
     }
-    return { data, ...all }
+  }
+
+  const { data: favesResponse, refresh, execute } = useLazyFetch('/api/faves', {
+    query: { babyId },
+    immediate: false,
+    server: false,
+  })
+
+  async function fetchFaves() {
+    if (!faves.value)
+      fetched.value = true
+
+    await execute()
+    faves.value = favesResponse.value
+    return faves
   }
 
   async function addFave(randomNames: Omit<Name, 'createdAt'>[] | null) {
@@ -60,8 +109,10 @@ export const useFaves = defineStore('faves', () => {
       loading.value = true
 
       try {
-        const { error } = await useFetch('/api/faves', {
+        const { data: addedFave, error } = await useLazyFetch('/api/faves', {
           method: 'POST',
+          server: false,
+          query: { babyId },
           body: {
             firstNameId: `${firstName.id}`,
             middleNameId: `${middleName.id}`,
@@ -75,9 +126,10 @@ export const useFaves = defineStore('faves', () => {
           createError(error.value)
           return
         }
-
         // get the correct ids from sortable
-        await refresh()
+        if (addedFave.value && faves.value)
+          faves.value.push(addedFave.value)
+
         await storeSortOrder(await getSortableArray())
 
         toast.add({ title: 'Favorited' })
@@ -87,6 +139,9 @@ export const useFaves = defineStore('faves', () => {
           const title = err.data.data.issues.map((issue: any) => issue.message).join('\n')
           toast.add({ title, color: 'red' })
         }
+        else {
+          // console.log(err)
+        }
       }
     }
     loading.value = false
@@ -94,7 +149,7 @@ export const useFaves = defineStore('faves', () => {
 
   async function deleteFave(id: number) {
     try {
-      await useFetch(`/api/faves/${id}`, { method: 'DELETE' })
+      await useFetch(`/api/faves/${id}`, { method: 'DELETE', query: { babyId } })
 
       if (faves.value)
         faves.value = faves.value.filter(t => t.id !== id)
@@ -111,26 +166,14 @@ export const useFaves = defineStore('faves', () => {
     }
   }
 
-  // this updates the data store with the array value either from sortable or the db
-  function updateFavesOrder(arr: SortArray) {
-    const order = arr.map((x: string) => Number(x))
-    if (faves.value) {
-      faves.value = [...faves.value].sort((a, b) => {
-        const first = order.indexOf(a.id)
-        const second = order.indexOf(b.id)
-        return (first - second)
-      })
-    }
-  }
-
   return {
     addFave,
     deleteFave,
     refresh,
-    sortState,
     faves,
+    sortState,
+    fetchFaves,
     loading,
-    getStateFromDb,
     storeSortOrder,
     setSortableInstance,
   }

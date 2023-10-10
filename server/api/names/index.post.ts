@@ -1,34 +1,46 @@
 import type { InferInsertModel } from 'drizzle-orm'
-import { useValidatedBody, z } from 'h3-zod'
-import type { ZodTypeAny } from 'zod'
+import { z } from 'h3-zod'
 import { tables } from '#imports'
+import assertOwner from '~/server/utils/assertOwner'
 
-const NameShape = z.string().min(1).max(100)
-
-function arrayFromString<T extends ZodTypeAny>(schema: T) {
-  return z.preprocess((obj) => {
-    if (Array.isArray(obj))
-      return obj
-    else if (typeof obj === 'string')
-      return [obj]
-    else
-      return []
-  }, z.array(schema))
-}
+const NameShape = z.object({
+  name: z.string(),
+}).array()
 
 export default eventHandler(async (event) => {
-  const { name } = await useValidatedBody(event, {
-    name: arrayFromString(NameShape),
-  })
+  const { baby } = await assertOwner(event)
+
+  const namesToInsert = await readValidatedBody(event, NameShape.parse)
 
   // Handles a single name as text or an array
   const namesList: InferInsertModel<typeof tables.names>[] = []
-  name.map(row => namesList.push({
-    name: row,
+  namesToInsert.map(row => namesList.push({
+    name: row.name,
     createdAt: new Date(),
   }))
 
-  console.log('rs', name, namesList)
-  const nameResult = await useDb()?.insert(tables.names).values(namesList).returning().all()
-  return nameResult
+  // do via a transaction for rollback
+  return await useDb()?.transaction(async (tx) => {
+    try {
+      // insert all the names
+      const nameResults = await tx.insert(tables.names).values(namesList).returning().all()
+
+      // create the relations
+      const relations = nameResults.map((row) => {
+        return {
+          babyId: baby.id,
+          nameId: row.id,
+        } satisfies tables.NameToBaby
+      })
+
+      const relationResults = await tx.insert(tables.namesToBabies).values(relations).returning().all()
+      console.log(nameResults)
+      console.log(relationResults)
+      return nameResults
+    }
+    catch (error) {
+      tx.rollback()
+      createError({ statusCode: 500, statusMessage: `Could not add relations ${error}` })
+    }
+  })
 })

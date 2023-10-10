@@ -4,11 +4,10 @@ import { useDraggable } from 'vue-draggable-plus'
 import { useFaves } from '~/stores/faves'
 
 const faveStore = useFaves()
-const { pending } = await faveStore.getStateFromDb()
+await faveStore.fetchFaves()
 const { faves } = storeToRefs(faveStore)
-
+// const faves = await faveStore.fetchFaves()
 const el = ref<HTMLElement | null>(null)
-const st = ref([]) as Ref<Array<string>>
 
 const sortableOptions = {
   name: 'faves',
@@ -16,6 +15,7 @@ const sortableOptions = {
   store: {
     set: async (sortable: any) => {
       nextTick(async () => {
+        // handles when these move, but the add/delete ones are in the store
         await faveStore.storeSortOrder(sortable.toArray())
       })
     },
@@ -36,13 +36,13 @@ faveStore.setSortableInstance(draggable.toArray)
         Ideas
       </h2>
     </template>
-    <div v-if="pending" class="py-2 flex flex-col items-start gap-2">
+    <!-- <div v-if="TODO: Update" class="py-2 flex flex-col items-start gap-2">
       <USkeleton class="h-10 w-full" />
       <USkeleton class="h-10 w-full" />
-    </div>
-    <div v-else ref="el" class="flex flex-col">
+    </div> -->
+    <div ref="el" class="flex flex-col">
       <div
-        v-for="fave in faves" :key="fave.id" ref="st" :data-id="fave.id"
+        v-for="fave in faves" :key="fave.id" :data-id="fave.id"
         class="flex-1 flex justify-between items-center mb-2 p-2 rounded bg-primary-400/10 ring-1 ring-primary-500/25"
       >
         <UIcon name="i-heroicons-arrows-up-down" class="handle cursor-grab" />

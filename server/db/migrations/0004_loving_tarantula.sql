@@ -1,1 +1,0 @@
-ALTER TABLE `names` DROP COLUMN `completed`;

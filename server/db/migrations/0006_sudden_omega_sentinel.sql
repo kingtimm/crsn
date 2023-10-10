@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX `faves_first_name_id_middle_name_id_unique` ON `faves` (`first_name_id`,`middle_name_id`);
