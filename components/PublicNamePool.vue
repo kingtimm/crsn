@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const gender = ref('f')
 
-const { data, refresh } = await useLazyFetch('/api/public-name-pool', {
+const { data, refresh, pending } = await useFetch('/api/public-name-pool', {
   query: {
     gender,
   },
@@ -20,8 +20,8 @@ const unselected = 'bg-gray-100 text-black dark:bg-gray-700 dark:text-white'
 <template>
   <UCard :ui="{ footer: 'p-0 m-0' }">
     <div class="flex gap-3 justify-start">
-      <UButton icon="i-heroicons-arrow-path" color="ghost" aria="generate" class="dark:text-white" type="button" @click="refresh()" />
-      <p class="text-primary text-2xl">
+      <UButton :disabled="pending" icon="i-heroicons-arrow-path" color="black" variant="ghost" aria="generate" type="button" @click="refresh()" />
+      <p v-if="!pending" class="text-primary text-2xl">
         {{ names?.join(" ") }}
       </p>
     </div>
