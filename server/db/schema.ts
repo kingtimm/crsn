@@ -124,3 +124,9 @@ export const membershipRelations = relations(membership, ({ one }) => ({
     references: [babies.id],
   }),
 }))
+
+export const namesPool = sqliteTable('names_pool', {
+  name: text('Name').notNull(),
+  gender: text('Gender').notNull(),
+  frequency: integer('Frequency').notNull(),
+})
