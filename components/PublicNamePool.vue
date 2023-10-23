@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const gender = ref('f')
 
-const { data, refresh, pending } = await useFetch('/api/public-name-pool', {
+const { data, refresh, pending } = await useLazyFetch('/api/public-name-pool', {
   query: {
     gender,
   },
