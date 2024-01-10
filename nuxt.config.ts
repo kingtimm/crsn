@@ -15,6 +15,9 @@ export default defineNuxtConfig({
       },
     },
   },
+  routeRules: {
+    '/': { isr: 300 },
+  },
   runtimeConfig: {
     dbDir: resolve('./server/db'),
     public: {
@@ -36,8 +39,13 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
-  modules: ['@nuxt/ui', '@pinia/nuxt', 'nuxt-vitest'],
+  modules: ['@nuxt/ui', '@pinia/nuxt', '@nuxt/test-utils/module'],
   build: {
     transpile: ['vue-clerk', '@clerk/clerk-js'],
+  },
+  experimental: {
+    componentIslands: {
+      selectiveClient: true,
+    },
   },
 })

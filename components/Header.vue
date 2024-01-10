@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserButton } from 'vue-clerk'
+import { SignInButton, SignedIn, SignedOut, UserButton } from 'vue-clerk'
 import { dark } from '@clerk/themes'
 
 const colorMode = useColorMode()
@@ -21,9 +21,6 @@ const isDark = computed({
       </NuxtLink>
     </h1>
     <div class="m-3 flex gap-4 items-center">
-      <ULink to="/babies">
-        Babies
-      </ULink>
       <ClientOnly>
         <UButton
           :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'" color="gray" variant="ghost"
@@ -33,7 +30,15 @@ const isDark = computed({
           <div class="w-8 h-8" />
         </template>
       </ClientOnly>
-      <UserButton :key="colorMode.preference" class="right-0" :appearance="isDark ? { baseTheme: dark } : {}" />
+      <ULink to="/babies">
+        Babies
+      </ULink>
+      <SignedIn>
+        <UserButton :key="colorMode.preference" class="right-0" :appearance="isDark ? { baseTheme: dark } : {}" />
+      </SignedIn>
+      <SignedOut>
+        <SignInButton />
+      </SignedOut>
     </div>
   </UContainer>
 </template>
