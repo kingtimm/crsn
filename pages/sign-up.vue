@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { SignUp } from 'vue-clerk'
+import { dark } from '@clerk/themes'
+
+const colorMode = useColorMode()
+const isDark = computed(() => colorMode.value === 'dark')
 
 definePageMeta({
   middleware: ['public'],
@@ -8,6 +12,6 @@ definePageMeta({
 
 <template>
   <div class="grid h-full place-items-center">
-    <SignUp sign-in-url="/sign-in" />
+    <SignUp :appearance="isDark ? { baseTheme: dark } : {}" sign-in-url="/sign-in" />
   </div>
 </template>

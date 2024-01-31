@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SignInButton, SignedIn, SignedOut, UserButton } from 'vue-clerk'
+import { SignedIn, SignedOut, UserButton } from 'vue-clerk'
 import { dark } from '@clerk/themes'
 
 const colorMode = useColorMode()
@@ -37,7 +37,9 @@ const isDark = computed({
         <UserButton :key="colorMode.preference" class="right-0" :appearance="isDark ? { baseTheme: dark } : {}" />
       </SignedIn>
       <SignedOut>
-        <SignInButton />
+        <NuxtLink to="/sign-in">
+          Sign In
+        </NuxtLink>
       </SignedOut>
     </div>
   </UContainer>
